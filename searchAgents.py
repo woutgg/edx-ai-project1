@@ -365,6 +365,7 @@ def cornersHeuristic(state, problem):
         currentPoint = corner
         unvisitedCorners.remove(corner)
 
+    print "Heuristic: ", sum
     return sum
 
 class AStarCornersAgent(SearchAgent):
@@ -455,45 +456,50 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount']
     """
 
-    anyFoodProblem = AnyFoodSearchProblem(problem.startingGameState)
-    actions = search.ucs(anyFoodProblem)
-    return len(actions)
-    # if not problem.heuristicInfo.get('graph', False):
-    #     gameState = problem.startingGameState
-    #     width = problem.startingGameState.data.layout.width
-    #     height = problem.startingGameState.data.layout.height
+    position, foodGrid = state
+    foodList = list(foodGrid.asList())
+    gs = problem.startingGameState
 
-    #     graph = {}
-    #     for x in range(width):
-    #         for y in range(height):
-    #             if not gameState.hasWall(x, y):
-    #                 neighbors = []
-    #                 if x == 0:
-    #                     cols = [0, 1]
-    #                 elif x == width - 1:
-    #                     cols = [x-1, x]
-    #                 else:
-    #                     cols = [x-1, x, x+1]
+    print position
 
-    #                 if y == 0:
-    #                     rows = [0, 1]
-    #                 elif y == width - 1:
-    #                     rows = [y-1, y]
-    #                 else:
-    #                     rows = [y-1, y, y+1]
+    if not problem.heuristicInfo.get('foodDistanceGrid', False):
+        problem.heuristicInfo['foodDistanceGrid'] = {}
+        for food_from in foodList:
+            for food_to in foodList:
+                if not food_from == food_to:
+                    if problem.heuristicInfo['foodDistanceGrid'].get((food_to, food_from), False):
+                        problem.heuristicInfo['foodDistanceGrid'][(food_from, food_to)] = problem.heuristicInfo['foodDistanceGrid'][(food_to, food_from)]
+                    else:
+                        problem.heuristicInfo['foodDistanceGrid'][(food_from, food_to)] = mazeDistance(food_from, food_to, gs)
 
-    #                 for x1 in cols:
-    #                     for y1 in rows:
-    #                         if not gameState.hasWall(x1, y1) and not (x1, y1) == (x, y):
-    #                             neighbors.append( (x1, y1) )
-    #                 graph[(x, y)] = neighbors
+    foodDistanceGrid = problem.heuristicInfo['foodDistanceGrid']
+    totalDistance = 0
+    if len(foodList) > 0:
 
-    #     problem.heuristicInfo['graph'] = graph
+        distances = []
+        for food in foodList:
+            tDistance = 0
+            if foodDistanceGrid.get( (position, food), False):
+                tDistance = foodDistanceGrid[(position, food)]
+            else:
+                tDistance = mazeDistance(position, food, gs)
 
-    # else:
-    #     graph = problem.heuristicInfo['graph']
+            distances.append( (tDistance, food) )
 
-    # util.raiseNotDefined()
+        distance, closestFood = min(distances)
+
+        totalDistance = distance
+        currentPosition = closestFood
+        foodList.remove(closestFood)
+
+        while len(foodList) > 0:
+            distance, closestFood = min([(problem.heuristicInfo['foodDistanceGrid'][currentPosition, food],food) for food in foodList])
+            totalDistance += distance
+            currentPosition = closestFood
+            foodList.remove(closestFood)
+
+    print totalDistance
+    return totalDistance
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -600,3 +606,21 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False)
     return len(search.bfs(prob))
+
+def mazeDistanceU(point1, point2, gameState):
+    """
+    Returns the maze distance between any two points, using the search functions
+    you have already built.  The gameState can be any game state -- Pacman's position
+    in that state is ignored.
+
+    Example usage: mazeDistance( (2,4), (5,6), gameState)
+
+    This might be a useful helper function for your ApproximateSearchAgent.
+    """
+    x1, y1 = point1
+    x2, y2 = point2
+    walls = gameState.getWalls()
+    assert not walls[x1][y1], 'point1 is a wall: ' + point1
+    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+    prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False)
+    return len(search.ucs(prob))
