@@ -460,45 +460,15 @@ def foodHeuristic(state, problem):
     foodList = list(foodGrid.asList())
     gs = problem.startingGameState
 
-    print position
-
     if not problem.heuristicInfo.get('foodDistanceGrid', False):
         problem.heuristicInfo['foodDistanceGrid'] = {}
-        for food_from in foodList:
-            for food_to in foodList:
-                if not food_from == food_to:
-                    if problem.heuristicInfo['foodDistanceGrid'].get((food_to, food_from), False):
-                        problem.heuristicInfo['foodDistanceGrid'][(food_from, food_to)] = problem.heuristicInfo['foodDistanceGrid'][(food_to, food_from)]
-                    else:
-                        problem.heuristicInfo['foodDistanceGrid'][(food_from, food_to)] = mazeDistance(food_from, food_to, gs)
 
     foodDistanceGrid = problem.heuristicInfo['foodDistanceGrid']
+
     totalDistance = 0
+
     if len(foodList) > 0:
 
-        distances = []
-        for food in foodList:
-            tDistance = 0
-            if foodDistanceGrid.get( (position, food), False):
-                tDistance = foodDistanceGrid[(position, food)]
-            else:
-                tDistance = mazeDistance(position, food, gs)
-
-            distances.append( (tDistance, food) )
-
-        distance, closestFood = min(distances)
-
-        totalDistance = distance
-        currentPosition = closestFood
-        foodList.remove(closestFood)
-
-        while len(foodList) > 0:
-            distance, closestFood = min([(problem.heuristicInfo['foodDistanceGrid'][currentPosition, food],food) for food in foodList])
-            totalDistance += distance
-            currentPosition = closestFood
-            foodList.remove(closestFood)
-
-    print totalDistance
     return totalDistance
 
 class ClosestDotSearchAgent(SearchAgent):
