@@ -467,7 +467,7 @@ def foodHeuristic(state, problem):
 
     totalDistance = 0
 
-    if len(foodList) > 0:
+    # if len(foodList) > 0:
 
     return totalDistance
 
