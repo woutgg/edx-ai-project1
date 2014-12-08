@@ -691,12 +691,15 @@ class parameters:
         self.StartC1 = StartC1
         self.StartG1 = StartG
 
+papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 def readParam(path):
     fil = open(path, 'r')
     a = fil.read()
     b = a[1:-1].split(',')
-
+    print(b)
+    x=float(b[0])
+    print(x)
     papa.StartG = float(b[0])
     papa.StartG1 = float(b[1])
     papa.StartC = float(b[2])
@@ -704,8 +707,8 @@ def readParam(path):
     papa.parG = float(b[4])
     papa.parG1 = float(b[5])
     papa.parC = float(b[6])
-    papa.parC = float(b[7])
-
+    papa.parC1 = float(b[7])
+    print(papa.StartG)
     fil.close()
     fil = open(path, 'a')
     fil.write(' ok')
@@ -713,7 +716,7 @@ def readParam(path):
     return()
 
 
-if __name__ == '__main__':
+def super(args):
     """
     The main function called when pacman.py is run
     from the command line:
@@ -725,7 +728,7 @@ if __name__ == '__main__':
     > python pacman.py --help
     """
 
-    papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
+    #papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     path = "D:/University/MachineLearning/Pac-ManTest/par/par"
     cont = 0
@@ -749,15 +752,15 @@ if __name__ == '__main__':
 
 
     # s1=Singleton()
-    s1 = obj.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
-                        papa.cont, papa.parC1, papa.parG1, papa.StartC1, papa.StartG1)
-    s2 = obj.MyClass().getValue()
-    # print s2[0]
-    # print s1
+    s1 =obj.MyClass().setValue(papa.parC,papa.parG,papa.StartC,papa.StartG,
+                        papa.cont,papa.parC1,papa.parG1,papa.StartC1,papa.StartG1)
+    s2 =obj.MyClass().getValue()
+    print s2[0]
+    #print s1
 
-    args = readCommand(sys.argv[1:])  # Get game components based on input
+    #args = readCommand(sys.argv[1:])  # Get game components based on input
     runGames(**args)
 
     # import cProfile
     # cProfile.run("runGames( **args )")
-    pass
+    return()
