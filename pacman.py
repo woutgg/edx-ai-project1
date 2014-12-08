@@ -6,6 +6,7 @@
 # John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
+import os
 import obj
 import libPac
 
@@ -662,23 +663,6 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
     return games
 
 
-'''
-class Singleton(object):
-    _instance = None
-    def __new__(self,parC,parG,StartC,StartG,cont):
-    #def __new__(self):
-        if not self._instance:
-            self._instance=super(Singleton,self).__new__(self)
-            self.parC=parC
-            self.parG=parG
-            self.StartC=StartC
-            self.StartG=StartG
-            self.cont=cont
-
-        return self._instance
-'''
-
-
 class parameters:
     def __init__(self, parC, parG, StartC, StartG, cont, parC1, parG1, StartC1, StartG1):
         self.parC = parC
@@ -693,22 +677,23 @@ class parameters:
 
 papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-def readParam(path):
+def readParameters(path):
     fil = open(path, 'r')
     a = fil.read()
     b = a[1:-1].split(',')
-    print(b)
-    x=float(b[0])
-    print(x)
-    papa.StartG = float(b[0])
-    papa.StartG1 = float(b[1])
-    papa.StartC = float(b[2])
-    papa.StartC = float(b[3])
-    papa.parG = float(b[4])
-    papa.parG1 = float(b[5])
-    papa.parC = float(b[6])
-    papa.parC1 = float(b[7])
-    print(papa.StartG)
+
+    try:
+        papa.StartG = float(b[0])
+        papa.StartG1 = float(b[1])
+        papa.StartC = float(b[2])
+        papa.StartC = float(b[3])
+        papa.parG = float(b[4])
+        papa.parG1 = float(b[5])
+        papa.parC = float(b[6])
+        papa.parC1 = float(b[7])
+    except:
+        raise(Exception('Parameter file format error'))
+
     fil.close()
     fil = open(path, 'a')
     fil.write(' ok')
@@ -716,7 +701,7 @@ def readParam(path):
     return()
 
 
-def super(args):
+def runPacman(args):
     """
     The main function called when pacman.py is run
     from the command line:
@@ -728,39 +713,44 @@ def super(args):
     > python pacman.py --help
     """
 
-    #papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
+    fileExt = 'txt'
 
-    path = "D:/University/MachineLearning/Pac-ManTest/par/par"
+    path = os.path.join(os.getcwd(), 'data', 'par')
+    if not os.path.isdir(path):
+        os.makedirs(path, mode=0755)
+
     cont = 0
-    k = 0
-    while k == 0:
+    while True:
         try:
-            print(path + str(cont) + '.txt')
-            fil = open(path + str(cont) + '.txt', 'r')
-            a = fil.read()
-            if a[-1] == 'k':
-                cont += 1
-            else:
-                k = 1
-            fil.close()
+            filename = os.path.join(path, 'par' + str(cont) + '.' + fileExt)
+            print('considering parameter file: %s' % filename)
+            file = open(filename, 'r')
+            a = file.read().rstrip(' \t\n')
+            file.close()
+
+            if a[-1] != 'k':
+                break
+
+            cont += 1
+
         except:
-            print('NO')
+            print('  no parameter file with index %i' % cont)
             time.sleep(0.2)
 
+    print('  reading parameter file with index %i' % cont)
     papa.cont = cont
-    readParam(path + str(cont) + '.txt')
+    readParameters(filename)
 
 
-    # s1=Singleton()
-    s1 =obj.MyClass().setValue(papa.parC,papa.parG,papa.StartC,papa.StartG,
-                        papa.cont,papa.parC1,papa.parG1,papa.StartC1,papa.StartG1)
-    s2 =obj.MyClass().getValue()
-    print s2[0]
-    #print s1
+    obj.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
+                           papa.cont, papa.parC1, papa.parG1, papa.StartC1, papa.StartG1)
+    # print obj.MyClass().getValue()[0]
 
-    #args = readCommand(sys.argv[1:])  # Get game components based on input
     runGames(**args)
 
     # import cProfile
     # cProfile.run("runGames( **args )")
-    return()
+
+
+if __name__ == '__main__':
+    runPacman(**args)
