@@ -6,6 +6,9 @@
 # John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
+import obj
+import libPac
+
 """
 Pacman.py holds the logic for the classic pacman game along with the main
 code to run a game.  This file is divided into three sections:
@@ -650,12 +653,65 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
+        libPac.save(scores, wins, winRate, papa.cont)
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
         print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
         print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
 
     return games
+
+
+'''
+class Singleton(object):
+    _instance = None
+    def __new__(self,parC,parG,StartC,StartG,cont):
+    #def __new__(self):
+        if not self._instance:
+            self._instance=super(Singleton,self).__new__(self)
+            self.parC=parC
+            self.parG=parG
+            self.StartC=StartC
+            self.StartG=StartG
+            self.cont=cont
+
+        return self._instance
+'''
+
+
+class parameters:
+    def __init__(self, parC, parG, StartC, StartG, cont, parC1, parG1, StartC1, StartG1):
+        self.parC = parC
+        self.parG = parG
+        self.StartC = StartC
+        self.StartG = StartG
+        self.cont = cont
+        self.parC1 = parC1
+        self.parG1 = parG1
+        self.StartC1 = StartC1
+        self.StartG1 = StartG
+
+
+def readParam(path):
+    fil = open(path, 'r')
+    a = fil.read()
+    b = a[1:-1].split(',')
+
+    papa.StartG = float(b[0])
+    papa.StartG1 = float(b[1])
+    papa.StartC = float(b[2])
+    papa.StartC = float(b[3])
+    papa.parG = float(b[4])
+    papa.parG1 = float(b[5])
+    papa.parC = float(b[6])
+    papa.parC = float(b[7])
+
+    fil.close()
+    fil = open(path, 'a')
+    fil.write(' ok')
+    fil.close()
+    return()
+
 
 if __name__ == '__main__':
     """
@@ -668,8 +724,39 @@ if __name__ == '__main__':
 
     > python pacman.py --help
     """
-    args = readCommand( sys.argv[1:] ) # Get game components based on input
-    runGames( **args )
+
+    papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    path = "D:/University/MachineLearning/Pac-ManTest/par/par"
+    cont = 0
+    k = 0
+    while k == 0:
+        try:
+            print(path + str(cont) + '.txt')
+            fil = open(path + str(cont) + '.txt', 'r')
+            a = fil.read()
+            if a[-1] == 'k':
+                cont += 1
+            else:
+                k = 1
+            fil.close()
+        except:
+            print('NO')
+            time.sleep(0.2)
+
+    papa.cont = cont
+    readParam(path + str(cont) + '.txt')
+
+
+    # s1=Singleton()
+    s1 = obj.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
+                        papa.cont, papa.parC1, papa.parG1, papa.StartC1, papa.StartG1)
+    s2 = obj.MyClass().getValue()
+    # print s2[0]
+    # print s1
+
+    args = readCommand(sys.argv[1:])  # Get game components based on input
+    runGames(**args)
 
     # import cProfile
     # cProfile.run("runGames( **args )")
