@@ -702,7 +702,7 @@ def readParameters(path):
     return()
 
 
-def runPacman(args):
+def runPacman(index, args):
     """
     The main function called when pacman.py is run
     from the command line:
@@ -718,33 +718,37 @@ def runPacman(args):
 
     parPath = os.path.join(os.getcwd(), 'data', 'par')
 
-    cont = 0
-    while True:
-        try:
-            # FIXME: move this away from here, is it possible to keep the engine free from deps on the ML main project?
-            filename = os.path.join(parPath, 'par' + str(cont) + '.' + fileExt)
-            # logger.debug('considering parameter file: %s' % filename)
-            file = open(filename, 'r')
-            a = file.read().rstrip(' \t\n')
-            file.close()
+    filename = os.path.join(parPath, 'par' + str(index) + '.' + fileExt)
+    logger.debug('  using parameter file with index %i' % index)
+    papa.cont = index
 
-            if a[-1] != 'k':
-                break
 
-            cont += 1
+#     cont = 0
+#     while True:
+#         try:
+#             # FIXME: move this away from here, is it possible to keep the engine free from deps on the ML main project?
+#             filename = os.path.join(parPath, 'par' + str(cont) + '.' + fileExt)
+#             # logger.debug('considering parameter file: %s' % filename)
+#             file = open(filename, 'r')
+#             a = file.read().rstrip(' \t\n')
+#             file.close()
+#
+#             if a[-1] != 'k':
+#                 break
+#
+#             cont += 1
+#
+#         except:
+#             logger.debug('  no parameter file with index %i' % cont)
+#             time.sleep(0.2)
+#
+#     logger.debug('  using parameter file with index %i' % cont)
+#     papa.cont = cont
 
-        except:
-            logger.debug('  no parameter file with index %i' % cont)
-            time.sleep(0.2)
-
-    logger.debug('  reading parameter file with index %i' % cont)
-    papa.cont = cont
     readParameters(filename)
-
 
     obj.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
                            papa.cont, papa.parC1, papa.parG1, papa.StartC1, papa.StartG1)
-    # print obj.MyClass().getValue()[0]
 
     runGames(**args)
 
