@@ -719,31 +719,7 @@ def runPacman(index, args):
     parPath = os.path.join(os.getcwd(), 'data', 'par')
 
     filename = os.path.join(parPath, 'par' + str(index) + '.' + fileExt)
-    logger.debug('  using parameter file with index %i' % index)
     papa.cont = index
-
-
-#     cont = 0
-#     while True:
-#         try:
-#             # FIXME: move this away from here, is it possible to keep the engine free from deps on the ML main project?
-#             filename = os.path.join(parPath, 'par' + str(cont) + '.' + fileExt)
-#             # logger.debug('considering parameter file: %s' % filename)
-#             file = open(filename, 'r')
-#             a = file.read().rstrip(' \t\n')
-#             file.close()
-#
-#             if a[-1] != 'k':
-#                 break
-#
-#             cont += 1
-#
-#         except:
-#             logger.debug('  no parameter file with index %i' % cont)
-#             time.sleep(0.2)
-#
-#     logger.debug('  using parameter file with index %i' % cont)
-#     papa.cont = cont
 
     readParameters(filename)
 
