@@ -687,7 +687,7 @@ def readParameters(path):
         papa.StartG = float(b[0])
         papa.StartG1 = float(b[1])
         papa.StartC = float(b[2])
-        papa.StartC = float(b[3])
+        papa.StartC1 = float(b[3])
         papa.parG = float(b[4])
         papa.parG1 = float(b[5])
         papa.parC = float(b[6])
