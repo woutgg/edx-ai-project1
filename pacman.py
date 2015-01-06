@@ -693,7 +693,7 @@ def readParameters(path):
         papa.parC = float(b[6])
         papa.parC1 = float(b[7])
     except:
-        raise(Exception('Parameter file format error'))
+        raise(Exception('Parameter file format error or a none in file: '+str(path)))
 
     fil.close()
     fil = open(path, 'a')
