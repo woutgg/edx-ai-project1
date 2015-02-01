@@ -655,7 +655,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
-        libPac.save(scores, wins, winRate, papa.cont)
+        libPac.save(scores, wins, winRate, singleton.MyClass().cont)
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
         print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
@@ -664,42 +664,15 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
     return games
 
 
-class parameters:
-    def __init__(self, parC, parG, StartC, StartG, cont, parC1, parG1, StartC1, StartG1):
-        self.parC = parC
-        self.parG = parG
-        self.StartC = StartC
-        self.StartG = StartG
-        self.cont = cont
-        self.parC1 = parC1
-        self.parG1 = parG1
-        self.StartC1 = StartC1
-        self.StartG1 = StartG
-
-papa = parameters(0, 0, 0, 0, 0, 0, 0, 0, 0)
-
 def readParameters(path):
     fil = open(path, 'r')
     a = fil.read()
-    b = a[1:-1].split(',')
 
-    try:
-        papa.StartG = float(b[0])
-        papa.StartG1 = float(b[1])
-        papa.StartC = float(b[2])
-        papa.StartC1 = float(b[3])
-        papa.parG = float(b[4])
-        papa.parG1 = float(b[5])
-        papa.parC = float(b[6])
-        papa.parC1 = float(b[7])
-    except:
-        raise(Exception('Parameter file format error or a none in file: '+str(path)))
-
+    singleton.MyClass().chrom.parse(a)
     fil.close()
     fil = open(path, 'a')
     fil.write(' ok')
     fil.close()
-    return()
 
 
 def runPacman(index, args):
@@ -719,12 +692,9 @@ def runPacman(index, args):
     parPath = os.path.join(os.getcwd(), 'data', 'par')
 
     filename = os.path.join(parPath, 'par' + str(index) + '.' + fileExt)
-    papa.cont = index
 
     readParameters(filename)
-
-    singleton.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
-                           papa.cont, papa.parC1, papa.parG1, papa.StartC1, papa.StartG1)
+    singleton.MyClass().cont = index
 
     runGames(**args)
 
