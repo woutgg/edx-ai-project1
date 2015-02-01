@@ -8,7 +8,7 @@
 
 import logging
 import os
-import obj
+import singleton
 import libPac
 
 """
@@ -286,11 +286,11 @@ class ClassicGameRules:
         if state.isLose(): self.lose(state, game)
 
     def win( self, state, game ):
-        if not self.quiet: print "Pacman emerges victorious! Score: %d" % state.data.score
+        #if not self.quiet: print "Pacman emerges victorious! Score: %d" % state.data.score
         game.gameOver = True
 
     def lose( self, state, game ):
-        if not self.quiet: print "Pacman died! Score: %d" % state.data.score
+        #if not self.quiet: print "Pacman died! Score: %d" % state.data.score
         game.gameOver = True
 
     def getProgress(self, game):
@@ -723,7 +723,7 @@ def runPacman(index, args):
 
     readParameters(filename)
 
-    obj.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
+    singleton.MyClass().setValue(papa.parC, papa.parG, papa.StartC, papa.StartG,
                            papa.cont, papa.parC1, papa.parG1, papa.StartC1, papa.StartG1)
 
     runGames(**args)
