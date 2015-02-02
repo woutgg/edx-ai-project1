@@ -8,7 +8,7 @@
 
 import logging
 import os
-import singleton
+from chromSingleton import ChromSingleton as ChromObj
 import libPac
 
 """
@@ -655,7 +655,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
-        libPac.save(scores, wins, winRate, singleton.MyClass().cont)
+        libPac.save(scores, wins, winRate, ChromObj().cont)
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
         print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
@@ -668,7 +668,7 @@ def readParameters(path):
     fil = open(path, 'r')
     a = fil.read()
 
-    singleton.MyClass().chrom.parse(a)
+    ChromObj().chrom.parse(a)
     fil.close()
     fil = open(path, 'a')
     fil.write(' ok')
@@ -694,7 +694,7 @@ def runPacman(index, args):
     filename = os.path.join(parPath, 'par' + str(index) + '.' + fileExt)
 
     readParameters(filename)
-    singleton.MyClass().cont = index
+    ChromObj().cont = index
 
     runGames(**args)
 
