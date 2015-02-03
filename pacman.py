@@ -655,7 +655,9 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
-        libPac.save(scores, wins, winRate, ChromObj().cont)
+        index, generation = ChromObj().index, ChromObj().generation
+        libPac.save(scores, wins, winRate, index)
+        print '===== Results for individual %s of gen. %s =====' % (index, generation)
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
         print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
@@ -675,7 +677,7 @@ def readParameters(path):
     fil.close()
 
 
-def runPacman(index, args):
+def runPacman(index, generation, args):
     """
     The main function called when pacman.py is run
     from the command line:
@@ -694,7 +696,8 @@ def runPacman(index, args):
     filename = os.path.join(parPath, 'par' + str(index) + '.' + fileExt)
 
     readParameters(filename)
-    ChromObj().cont = index
+    ChromObj().index = index
+    ChromObj().generation = generation
 
     runGames(**args)
 
